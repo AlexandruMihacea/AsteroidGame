@@ -1,0 +1,13 @@
+body{
+    background: #000;
+}
+
+#content{
+    max-width: 1400px;
+    margin: auto;
+}
+
+#canvas{
+    background: #005;
+    border: 1px solid white;
+}
