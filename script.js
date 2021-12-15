@@ -7,6 +7,7 @@ let nava;
 let gloante = [];
 let asteroizi = [];
 let scor = 0;
+let highScore = 0;
 let vieti = 3;
 
 
@@ -22,7 +23,7 @@ function SetJoc(){
     context.fillRect(0,0,canvas.width,canvas.height);
     nava = new Nava();
     
-    for(let i = 0; i < 8; i++){
+    for(let i = 0; i < 6; i++){
         asteroizi.push(new Asteroid());
     }
 
@@ -31,7 +32,7 @@ function SetJoc(){
     });
     document.body.addEventListener('keyup', function(e){
         chei[e.keyCode] = false;
-        if(e.keyCode === 32){
+        if(e.keyCode === 32){     
             gloante.push(new Gloante(nava.unghi));
         }
     });
@@ -42,10 +43,11 @@ function SetJoc(){
 
 class Nava{
     constructor(){
-        this.show = true;
+        this.visibil = true;
         this.x = canvasLatime / 2;
         this.y = canvasInaltime / 2;
         this.mergeInFata = false;
+        this.mergeInSpate = false;
         this.viteza = 0.09;
         this.velX = 0;
         this.velY = 0;
@@ -64,6 +66,10 @@ class Nava{
         if(this.mergeInFata){
             this.velX += Math.cos(grade) * this.viteza;
             this.velY += Math.sin(grade) * this.viteza;
+        }
+        if(this.mergeInSpate){
+            this.velX -= Math.cos(grade) * this.viteza;
+            this.velY -= Math.sin(grade) * this.viteza;
         }
         if(this.x < this.raza){
             this.x = canvas.width;
@@ -122,7 +128,7 @@ class Gloante{
     }
 
     Deseneaza = () => {
-        context.fillStyle = "white";
+        context.fillStyle = "red";
         context.fillRect(this.x, this.y, this.latime, this.inaltime);
     }
 }
@@ -131,14 +137,16 @@ class Gloante{
 
 
 class Asteroid{
-    constructor(x,y){
+    constructor(x,y,diametru,nivel,razaColiziune){
         this.visibil = true;
-        this.x = Math.floor(Math.random() * canvasLatime);
-        this.y = Math.floor(Math.random() * canvasInaltime);
+        this.x = x || Math.floor(Math.random() * canvasLatime);
+        this.y = y || Math.floor(Math.random() * canvasInaltime);
         this.viteza = 0.9;
-        this.diametru = 30;
+        this.diametru = diametru || 40;
         this.unghi = Math.floor(Math.random() * 360);
         this.sColor = "white";
+        this.razaColiziune = razaColiziune || 26;
+        this.nivel = nivel || 1;
     }
 
     Update = () => {
@@ -167,6 +175,7 @@ class Asteroid{
             context.lineTo(this.x - this.diametru * Math.cos(vertUnghi * i + radiani),
             this.y - this.diametru * Math.sin(vertUnghi * i + radiani));
         }
+      
         context.closePath();
         context.stroke();
     }
@@ -174,8 +183,47 @@ class Asteroid{
 
 
 
+
+Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
+    let razaSum;
+    let xDiff;
+    let yDiff;
+
+    razaSum = r1 + r2;
+    xDiff = p1x - p2x;
+    yDiff = p1y - p2y;
+    if(razaSum > Math.sqrt((xDiff * xDiff) + (yDiff * yDiff))){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+ viataNava = () => {
+    let startX = 950;
+    let startY = 10;
+    let puncte = [[9,9] , [-9,9]];
+    context.strokeStyle = 'red';
+    for(let i = 0; i < vieti; i++)
+    {
+        context.beginPath();
+        context.moveTo(startX, startY);
+        for(let j = 0; j < puncte.length;j++){
+            context.lineTo(startX + puncte[j][0], startY + puncte[j][1]);
+        }
+       
+        context.closePath();
+        context.stroke();
+        startX -= 30;
+    }
+}
+
+
+
+
  Incarca = () => {
     nava.mergeInFata = (chei[83] || chei[38]);
+    nava.mergeInSpate = (chei[40])
     if(chei[67] || chei[39]){
         nava.Roteste(1);
     }
@@ -183,8 +231,79 @@ class Asteroid{
         nava.Roteste(-1);
     }
     context.clearRect(0,0,canvasLatime,canvasInaltime);
+
+
+   
+    context.fillStyle = 'white';
+    context.font = 'px Arial';
+    context.fillText('SCORE: ' + scor.toString(), 20, 35);
+  
+    if(vieti <= 0 ){
+        nava.visibil = false;
+        context.fillStyle = 'white';
+        context.font = '50px Arial';
+        context.fillText('GAME OVER', canvasLatime / 2 - 150, canvasInaltime / 2);
+    } 
+    viataNava();
+    
+    
+    if(asteroizi.length !== 0){
+        for(let k = 0; k < asteroizi.length;k++){
+            if(Coliziune(nava.x,nava.y, 11,asteroizi[k].x, asteroizi[k].y,asteroizi[k].razaColiziune)){
+                nava.x = canvasLatime / 2;
+                nava.y = canvasInaltime/ 2;
+                nava.velX = 0;
+                nava.velY = 0;
+                vieti -= 1 ;
+            }
+        }
+    }
+
+
+
+
+
+    if(asteroizi.length !== 0 && gloante.length !== 0){
+    loop1:
+        for(let i = 0; i < asteroizi.length;i++){
+            for(let r = 0; r < gloante.length;r++){
+                if(Coliziune(gloante[r].x,gloante[r].y,3,asteroizi[i].x,asteroizi[i].y, asteroizi[i].razaColiziune)){
+                    if(asteroizi[i].nivel === 1){
+                        asteroizi.push(new Asteroid(asteroizi[i].x - 5, asteroizi[i].y - 5, 30,2,32));
+                        asteroizi.push(new Asteroid(asteroizi[i].x + 5, asteroizi[i].y + 5, 30,2,32));
+                        scor += 20;
+                    }else if(asteroizi[i].nivel === 2){
+                        asteroizi.push(new Asteroid(asteroizi[i].x - 5, asteroizi[i].y - 5,20,3,12));
+                        asteroizi.push(new Asteroid(asteroizi[i].x + 5, asteroizi[i].y + 5,20,3,12));
+                        scor += 15;
+                    }
+                    else if(asteroizi[i].nivel === 3){
+                        asteroizi.push(new Asteroid(asteroizi[i].x - 5, asteroizi[i].y - 5, 10,4,12));
+                        asteroizi.push(new Asteroid(asteroizi[i].x + 5, asteroizi[i].y + 5, 10,4,12));
+                        asteroizi.push(new Asteroid());
+                        scor += 10; 
+                    }
+                    asteroizi.splice(i,1);   
+                    gloante.splice(r,1);
+
+                    if(scor > highScore){
+                        highScore = scor;
+                    }
+
+                    break loop1;
+
+                   
+                }
+            }
+        }
+
+    }
+
+    if(nava.visibil){
     nava.Update();
     nava.Deseneaza();
+    }
+
     if(gloante.length !== 0){
         for(let i = 0; i < gloante.length;i++)
         {
@@ -196,7 +315,7 @@ class Asteroid{
         for(let j = 0; j < asteroizi.length; j++)
         {
             asteroizi[j].Update();
-            asteroizi[j].Deseneaza();
+            asteroizi[j].Deseneaza(j);
         }
     }
     requestAnimationFrame(Incarca);
