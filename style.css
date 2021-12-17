@@ -11,3 +11,17 @@ body{
     background: #005;
     border: 1px solid white;
 }
+
+.btns{
+    background-color: greenyellow;
+    border: 2px solid red;
+    border-radius: 7px;
+    padding: 10px 24px;
+    transition-duration: 0.4s;
+    font-size: large;
+}
+.btn:hover{
+    background-color: black;
+    color: rgb(0, 0, 0);
+}
+

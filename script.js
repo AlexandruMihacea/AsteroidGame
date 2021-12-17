@@ -9,9 +9,14 @@ let asteroizi = [];
 let scor = 0;
 let highScore = 0;
 let vieti = 3;
+// function startGame(){
+//     document.addEventListener('click', SetJoc);
+// } 
+
 
 
 document.addEventListener('DOMContentLoaded', SetJoc);
+
 
 
 function SetJoc(){
@@ -21,6 +26,8 @@ function SetJoc(){
     canvas.height = canvasInaltime;
     context.fillStyle = 'black';
     context.fillRect(0,0,canvas.width,canvas.height);
+    
+    
     nava = new Nava();
     
     for(let i = 0; i < 6; i++){
@@ -32,7 +39,7 @@ function SetJoc(){
     });
     document.body.addEventListener('keyup', function(e){
         chei[e.keyCode] = false;
-        if(e.keyCode === 32){     
+        if(e.keyCode === 32 || e.keyCode === 88){     
             gloante.push(new Gloante(nava.unghi));
         }
     });
@@ -40,7 +47,7 @@ function SetJoc(){
 }
 
 
-
+//Definirea Navelor
 class Nava{
     constructor(){
         this.visibil = true;
@@ -108,6 +115,8 @@ class Nava{
 
 
 
+
+// Definirea Gloantelor
 class Gloante{
     constructor(unghi){
         this.visibil = true;
@@ -135,7 +144,7 @@ class Gloante{
 
 
 
-
+//Definirea asteroizilor
 class Asteroid{
     constructor(x,y,diametru,nivel,razaColiziune){
         this.visibil = true;
@@ -183,7 +192,7 @@ class Asteroid{
 
 
 
-
+//Functioa de coliziune a gloantelor cu asteroizii si a navei
 Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
     let razaSum;
     let xDiff;
@@ -199,6 +208,8 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
     }
 }
 
+
+//Functia de definire a vietilor navei
  viataNava = () => {
     let startX = 950;
     let startY = 10;
@@ -221,6 +232,7 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
 
 
 
+//Functia de incarcare
  Incarca = () => {
     nava.mergeInFata = (chei[83] || chei[38]);
     nava.mergeInSpate = (chei[40])
@@ -235,14 +247,14 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
 
    
     context.fillStyle = 'white';
-    context.font = 'px Arial';
+    context.font = '21px Arial';
     context.fillText('SCORE: ' + scor.toString(), 20, 35);
   
     if(vieti <= 0 ){
         nava.visibil = false;
         context.fillStyle = 'white';
-        context.font = '50px Arial';
-        context.fillText('GAME OVER', canvasLatime / 2 - 150, canvasInaltime / 2);
+        context.font = '30px Arial';
+        context.fillText('GAME OVER', canvasLatime / 2 - 100, canvasInaltime / 2);
     } 
     viataNava();
     
@@ -258,9 +270,6 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
             }
         }
     }
-
-
-
 
 
     if(asteroizi.length !== 0 && gloante.length !== 0){
