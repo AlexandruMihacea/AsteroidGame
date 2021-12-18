@@ -1,23 +1,21 @@
 let canvas;
 let context;
-let canvasLatime = 1000;
-let canvasInaltime = 500;
+let canvasLatime = 1400;
+let canvasInaltime = 700;
 let chei = [];
 let nava;
 let gloante = [];
 let asteroizi = [];
 let scor = 0;
-let highScore = 0;
+const Save_Chei = "highscore";
 let vieti = 3;
-// function startGame(){
-//     document.addEventListener('click', SetJoc);
-// } 
+   
+
+
 
 
 
 document.addEventListener('DOMContentLoaded', SetJoc);
-
-
 
 function SetJoc(){
     canvas = document.getElementById("canvas");
@@ -26,6 +24,8 @@ function SetJoc(){
     canvas.height = canvasInaltime;
     context.fillStyle = 'black';
     context.fillRect(0,0,canvas.width,canvas.height);
+    let fxLaser = new Audio("Sound/Piu.wav")
+   
     
     
     nava = new Nava();
@@ -41,11 +41,19 @@ function SetJoc(){
         chei[e.keyCode] = false;
         if(e.keyCode === 32 || e.keyCode === 88){     
             gloante.push(new Gloante(nava.unghi));
+            fxLaser.play();
         }
     });
     Incarca();
 }
 
+function Restart(){
+    addEventListener('click',function(){
+        console.log("CF");
+        // context.clearRect(0,0,canvasLatime,canvasInaltime);
+
+    
+    })}
 
 //Definirea Navelor
 class Nava{
@@ -211,7 +219,7 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
 
 //Functia de definire a vietilor navei
  viataNava = () => {
-    let startX = 950;
+    let startX = 1300;
     let startY = 10;
     let puncte = [[9,9] , [-9,9]];
     context.strokeStyle = 'red';
@@ -232,8 +240,9 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
 
 
 
+
 //Functia de incarcare
- Incarca = () => {
+Incarca = () => {
     nava.mergeInFata = (chei[83] || chei[38]);
     nava.mergeInSpate = (chei[40])
     if(chei[67] || chei[39]){
@@ -244,11 +253,15 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
     }
     context.clearRect(0,0,canvasLatime,canvasInaltime);
 
+  
+    
 
-   
+
     context.fillStyle = 'white';
     context.font = '21px Arial';
     context.fillText('SCORE: ' + scor.toString(), 20, 35);
+
+
   
     if(vieti <= 0 ){
         nava.visibil = false;
@@ -295,13 +308,7 @@ Coliziune = (p1x, p1y, r1, p2x, p2y, r2) => {
                     asteroizi.splice(i,1);   
                     gloante.splice(r,1);
 
-                    if(scor > highScore){
-                        highScore = scor;
-                    }
-
                     break loop1;
-
-                   
                 }
             }
         }

@@ -3,13 +3,16 @@ body{
 }
 
 #content{
-    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 2000px;
     margin: auto;
 }
 
 #canvas{
     background: #005;
-    border: 1px solid white;
+    border: 2px solid greenyellow;
 }
 
 .btns{
