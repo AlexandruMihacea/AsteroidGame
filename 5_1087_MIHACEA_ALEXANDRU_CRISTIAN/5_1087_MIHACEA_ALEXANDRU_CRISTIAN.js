@@ -16,6 +16,11 @@ let vieti = 3;
 
 
 document.addEventListener('DOMContentLoaded', SetJoc);
+document.getElementById("startBtn").addEventListener("click", function (e) {
+    e.preventDefault();
+    document.getElementById("content").style.display="block";
+    document.getElementById("landing").style.display="none";
+})
 
 function SetJoc(){
     canvas = document.getElementById("canvas");
